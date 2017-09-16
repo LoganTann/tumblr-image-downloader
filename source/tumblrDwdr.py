@@ -1,8 +1,14 @@
 # coding: utf-8
-#Simple tumblr image downloader by Logan Tann
-#Under the MIT/X11 license.Read the readme file if you want to discover it !
-#it is not recommended to copy paste this code (ahah python indent error lol).In github web interface,click on the RAW button and ctrl+s !
+#doc (this will be displayed in the first run: 
+"""
+Simple Tumblr Image Downloader by Logan Tann
+Version 1.0.1
+Under the MIT/X11 License
 
+Changelog for this version :
+    -fix multiple directories whith mkdir and changedir bug
+    -added current working directory displaying
+    -changed downloading display"""
 import os
 try:
     from bs4 import BeautifulSoup
@@ -50,11 +56,12 @@ def main():
     while not quit:
         
         #Set download directory
+        print('\n----------\n\nCurrent working directoy :',os.getcwd())
         path = input('Enter a folder to download : ')
         if not os.path.isdir(path):
-            os.mkdir(path)
+            os.makedirs(path)
         os.chdir(path)
-
+        print('Current directory set to :',os.getcwd())
         #set tumblr url and download
         inputUrl = input("Enter the tumblr url : ")
         if isPageOK(inputUrl):
@@ -63,13 +70,13 @@ def main():
             compteur = 1
             for url in jobList:
                 extension = "." + url.split('.')[-1]
-                print("Downloading : ",url," to ",compteur,extension)
+                print("Downloading : ",url," to <current folder>/{0}{1}".format(compteur,extension))
                 download(url,str(compteur) + extension)
                 compteur += 1
         else:
             print("An error occured ! Did the url is valid or correct ?")
             
-        os.chdir('..')
+        os.chdir('../')
         
         choix = input("Do you want to download another page ? [y/n]:")
         if choix != "y":
@@ -77,6 +84,7 @@ def main():
     
     
 if __name__ == '__main__':
+    print(__doc__)
     main()
     print('Program finished.')
     input('Press a key to exit')
