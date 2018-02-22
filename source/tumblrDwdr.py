@@ -2,13 +2,11 @@
 #doc (this will be displayed in the first run: 
 """
 Simple Tumblr Image Downloader by Logan Tann
-Version 1.0.1
+Version 1.0.2
 Under the MIT/X11 License
 
 Changelog for this version :
-    -fix multiple directories whith mkdir and changedir bug
-    -added current working directory displaying
-    -changed downloading display"""
+    -if there is not <figure> balises,search in body (will REALLY download all image)"""
 import os
 try:
     from bs4 import BeautifulSoup
@@ -42,7 +40,10 @@ def job(url):
     jobList = []
     html = urllib.request.urlopen(url).read()
     allFigures = BeautifulSoup(html,"html.parser").find_all('figure')
-    
+    if len(allFigures)<=1:
+        print("unable to find <figure> balises. It is due to a different theme. I will download from the <body> but I will download ALL images inside the page.")
+        allFigures = BeautifulSoup(html,"html.parser").find_all('body')
+        
     for figure in allFigures:
         allImg = BeautifulSoup(str(figure),"html.parser").find_all('img')
         for img in allImg:
@@ -71,7 +72,10 @@ def main():
             for url in jobList:
                 extension = "." + url.split('.')[-1]
                 print("Downloading : ",url," to <current folder>/{0}{1}".format(compteur,extension))
-                download(url,str(compteur) + extension)
+                try:
+                    download(url,str(compteur) + extension)
+                except Exception as e:
+                    print("error during downloading "+url+". Ignoring this file...")
                 compteur += 1
         else:
             print("An error occured ! Did the url is valid or correct ?")
