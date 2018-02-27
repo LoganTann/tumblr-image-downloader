@@ -48,7 +48,8 @@ def job(url):
         allImg = BeautifulSoup(str(figure),"html.parser").find_all('img')
         for img in allImg:
             jobList.append(img['src'])
-    
+    if len(jobList)<=0:
+        print("error : i didn't find anything !! it is probably due to a theme that load the content of the page using javascript but i can't execute JS! I think i will download anything !\n")
     return jobList
 
 def main():
